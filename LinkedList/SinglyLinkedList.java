@@ -76,7 +76,7 @@ public class SinglyLinkedList<T> {
         if (size == 0) {
             throw new NoSuchElementException("The list is empty, nothing to remove.");
         }
-        T removedData = head.data;
+        T removedData = head.getData();
         if (size == 1) {
             head = null;
             tail = null;
@@ -98,13 +98,13 @@ public class SinglyLinkedList<T> {
      */
     public T removeFromBack() {
         if (size == 0) {
-            throw new NoSuchElementException("The list in empty, nothing to remove.");
+            throw new NoSuchElementException("The list is empty, nothing to remove.");
         }
+        T removedData = tail.getData();
         if (size == 1) {
             head = null;
             tail = null;
         }
-        T removedData = tail.getData();
         else {
             SinglyLinkedListNode<T> current = head;
             for (int i = 0; i < size - 2; i++) {
@@ -154,9 +154,5 @@ public class SinglyLinkedList<T> {
     public int size() {
         // DO NOT MODIFY THIS METHOD!
         return size;
-    }
-
-    public T getNext() {
-        return 
     }
 }
