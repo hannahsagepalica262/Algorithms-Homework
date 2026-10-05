@@ -1,3 +1,4 @@
+package ArrayList;
 import java.util.NoSuchElementException;
 
 /**
@@ -40,7 +41,17 @@ public class ArrayList<T> {
      * @throws java.lang.IllegalArgumentException if data is null
      */
     public void addToFront(T data) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        if (data == null) {
+            throw new IllegalArgumentException("Data cannot be null");
+        }
+        if (size == backingArray.length) {
+            doubleSize();
+        }
+        for (int i = size - 1; i >= 0; i--) {
+            backingArray[i + 1] = backingArray[i];
+        }
+        backingArray[0] = data;
+        size++;
     }
 
     /**
@@ -52,11 +63,11 @@ public class ArrayList<T> {
      * @throws java.lang.IllegalArgumentException if data is null
      */
     public void addToBack(T data) {
-        if (data is null) {
+        if (data == null) {
                 throw new IllegalArgumentException("Data cannot be null");
         }
         if (size == backingArray.length) {
-            doubleCapacity();
+            doubleSize();
         }
         backingArray[size] = data;
         size++;
@@ -112,10 +123,10 @@ public class ArrayList<T> {
     }
 
     private void doubleSize() {
-        T[] newArray = (T[]) new Object(backingArray.length * 2);
+        T[] newArray = (T[]) new Object[backingArray.length * 2];
 
-        for (int i = 0; i > size; i++) {
-            backingArray[i] = newArray[i];
+        for (int i = 0; i < size; i++) {
+            newArray[i] = backingArray[i];
         }
         backingArray = newArray;
     }
