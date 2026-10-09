@@ -73,34 +73,26 @@ public class ExternalChainingHashMap<K, V> {
         if (key == null || value == null) {
             throw new IllegalArgumentException("Key or value is null");
         }
+        if ((size + 1.0) / table.length > MAX_LOAD_FACTOR) {
+            resizeBackingTable(table.length);
+        }
         int rawHash = key.hashCode();
         int rawIndex = rawHash % table.length;
         int index = Math.abs(rawIndex);
 
-        ExternalChainingMapEntry<K, V> newEntry = new ExternalChainingMapEntry<>(key, value);
-        if ((size + 1.0) / table.length > MAX_LOAD_FACTOR) {
-            resizeBackingTable(table.length);
-        }
-        if (table[index] == null) {
-            table[index] = newEntry;
-            size++;
-            return null;
-        }
-        else {
-            ExternalChainingMapEntry<K, V> currNode = table[index];
-            while (currNode != null) {
-                if (currNode.getKey().equals(key)) {
-                    V oldValue = currNode.getValue();
-                    currNode.setValue(value);
-                    return oldValue;
-                }
-                currNode = currNode.getNext();
+        ExternalChainingMapEntry<K, V> currNode = table[index];
+        while (currNode != null) {
+            if (currNode.getKey().equals(key)) {
+                V oldValue = currNode.getValue();
+                currNode.setValue(value);
+                return oldValue;
             }
-            V oldValue = table[index].getValue();
-            newEntry.setNext(table[index]);
-            size++;
-            return oldValue;
+            currNode = currNode.getNext();
         }
+        ExternalChainingMapEntry<K, V> newEntry = new ExternalChainingMapEntry<>(key, value, table[index]);
+        table[index] = newEntry;
+        size++;
+        return null;
     }
 
 
@@ -162,15 +154,17 @@ public class ExternalChainingHashMap<K, V> {
         ExternalChainingMapEntry<K, V>[] newTable = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[(length * 2) + 1];
         for (int i = 0; i <= (table.length - 1); i++) {
             ExternalChainingMapEntry<K, V> currNode = table[i];
-            while (table[i] != null) {
-                int rawHash = table[i].getKey().hashCode();
+            while (currNode != null) {
+                ExternalChainingMapEntry<K, V> nextNode = currNode.getNext();
+
+                int rawHash = currNode.getKey().hashCode();
                 int rawIndex = rawHash % (((table.length) * 2) + 1);
                 int newIndex = Math.abs(rawIndex);
 
                 currNode.setNext(newTable[newIndex]);
                 newTable[newIndex] = currNode;
 
-                currNode = currNode.getNext();
+                currNode = nextNode;
             }
         }
         table = newTable;
