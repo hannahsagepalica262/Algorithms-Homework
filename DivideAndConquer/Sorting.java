@@ -43,16 +43,20 @@ public class Sorting {
         int length = arr.length;
         int midIndex = length / 2;
         T[] leftArray = (T[]) new Object[midIndex];
-        System.arraycopy(arr, 0, leftArray, 0, midIndex);
+        for (int i = 0; i < midIndex; i++) {
+            leftArray[i] = arr[i];
+        }
         T[] rightArray = (T[]) new Object[length - midIndex];
-        System.arraycopy(arr, 0, rightArray, 0,length - midIndex);
-
+        for (int i = midIndex; i < length; i++) {
+            rightArray[i - midIndex] = arr[i];
+        }
+        
         mergeSort(leftArray, comparator);
         mergeSort(rightArray, comparator);
 
         int i = 0;
         int j = 0;
-        while (!(i == length - 1 | j == length - 1)) {
+        while (i < leftArray.length && j < rightArray.length) {
             if (comparator.compare(leftArray[i], rightArray[j]) <= 0) {
                 arr[i + j] = leftArray[i];
                 i++;
@@ -134,7 +138,10 @@ public class Sorting {
                     arr[idx++] = bucket.remove(0);
                 }
             }
-
+            // clear buckets for next iteration
+            for (List<Integer> bucket : buckets) {
+                bucket.clear();
+            }
             // next digit place
             place *= 10;
         }
